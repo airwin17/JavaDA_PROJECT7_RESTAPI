@@ -9,8 +9,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 
 @Entity
@@ -22,11 +22,11 @@ public class BidList {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bidlistid")
     private int bidlistid;
-    @NotNull
+    @NotBlank(message = "Account is mandatory")
     private String account;
-    @NotNull
+    @NotBlank(message = "type is mandatory")
     private String type;
-    @Min(0)
+    @PositiveOrZero
     private Double bidQuantity;
     private Double askQuantity;
     private Double bid;

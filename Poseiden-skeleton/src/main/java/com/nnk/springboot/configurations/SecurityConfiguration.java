@@ -61,8 +61,9 @@ public class SecurityConfiguration {
     @Bean
     public UserService userService(UserRepository userRepository) {
         User user = new User();
+        user.setFullname("Admin");
         user.setUsername("admin");
-        user.setPassword("admin");
+        user.setPassword("AbC45678");
         user.setRole("ADMIN");
         userRepository.save(user);
         return new UserService(userRepository,user);

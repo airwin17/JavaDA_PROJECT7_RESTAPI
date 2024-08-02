@@ -38,11 +38,9 @@ public class UserController {
 
     @PostMapping("/validate")
     public String validate(@Valid User user, BindingResult result, Model model) {
-        if (!result.hasErrors()) {
-            
+        if (!result.hasErrors()) { 
             userService.save(user);
-            model.addAttribute("users", userService.findAll());
-            return "redirect:/user/list";
+            //return "redirect:/user/list";
         }
         return "user/add";
     }
@@ -64,7 +62,7 @@ public class UserController {
         if (result.hasErrors()) {
             return "user/update";
         }
-        user.setId(id);
+        user.setUserid(id);
         userService.save(user);
         model.addAttribute("users", userService.findAll());
         return "redirect:/user/list";

@@ -23,8 +23,8 @@ public class BidListService {
     public List<BidList> findAll() {
         return bidListRepository.findAll();
     }
-    public void addBidList(BidList bidList) {
-        bidListRepository.save(bidList);
+    public BidList addBidList(BidList bidList) {
+        return bidListRepository.save(bidList);
     }
     public BidList getBidList(int id){
         return bidListRepository.findById(id).get();

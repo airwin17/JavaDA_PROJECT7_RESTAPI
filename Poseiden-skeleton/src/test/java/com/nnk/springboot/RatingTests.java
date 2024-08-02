@@ -1,7 +1,8 @@
 package com.nnk.springboot;
 
 import com.nnk.springboot.domain.Rating;
-import com.nnk.springboot.repositories.RatingRepository;
+import com.nnk.springboot.exceptions.RequestedObjectNotFoundException;
+import com.nnk.springboot.services.RatingService;
 
 import jakarta.transaction.Transactional;
 
@@ -12,13 +13,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @SpringBootTest
 public class RatingTests {
 
 	@Autowired
-	private RatingRepository ratingRepository;
+	private RatingService ratingRsService;
 
 	@Test
 	@Transactional
@@ -26,23 +26,28 @@ public class RatingTests {
 		Rating rating = new Rating("Moodys Rating", "Sand PRating", "Fitch Rating", 10);
 
 		// Save
-		rating = ratingRepository.save(rating);
+		rating = ratingRsService.saveRating(rating);
 		assertNotNull(rating.getRatingid());
 		assertTrue(rating.getOrderNumber() == 10);
 
 		// Update
 		rating.setOrderNumber(20);
-		rating = ratingRepository.save(rating);
+		rating = ratingRsService.saveRating(rating);
 		assertTrue(rating.getOrderNumber() == 20);
 
 		// Find
-		List<Rating> listResult = ratingRepository.findAll();
+		List<Rating> listResult = ratingRsService.getRatings();
 		assertTrue(listResult.size() > 0);
 
 		// Delete
 		int id = rating.getRatingid();
-		ratingRepository.deleteByRatingid(id);
-		Optional<Rating> ratingList = ratingRepository.findByRatingid(id);
-		assertFalse(ratingList.isPresent());
+		ratingRsService.deleteRating(id);
+		Rating ratingList;
+		try {
+			ratingList = ratingRsService.getRatingById(id);
+		} catch (RequestedObjectNotFoundException e) {
+			ratingList = null;
+		}
+		assertNull(ratingList);
 	}
 }
