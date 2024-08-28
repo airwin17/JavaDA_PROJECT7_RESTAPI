@@ -23,9 +23,11 @@ import com.nnk.springboot.services.UserService;
 public class SecurityConfiguration {
     
     private UserRepository userRepository;
+    //securing routes by authority
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+        
         .csrf(csrf->csrf.disable())
         .authorizeHttpRequests(req->req
         .requestMatchers("/admin/**").hasAuthority("ADMIN")
@@ -39,17 +41,21 @@ public class SecurityConfiguration {
         .requestMatchers("/css/**").permitAll()
         .requestMatchers("/").hasAuthority("USER")
         .anyRequest().denyAll()).formLogin(login->login.loginPage("/user/loginPage").permitAll()
-        .loginProcessingUrl("/login").usernameParameter("username").defaultSuccessUrl("/")
-        ).logout(logout->logout.logoutUrl("/app-logout").logoutSuccessUrl("/user/loginPage"))
+        .loginProcessingUrl("/login").usernameParameter("username").defaultSuccessUrl("/"))
+        .logout(logout->logout.logoutUrl("/app-logout").logoutSuccessUrl("/user/loginPage"))
         .authenticationManager(authenticationProvider());
         return http.build();
     }
+    //configuring password encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
+        
         return new BCryptPasswordEncoder();
     }
+    //configuring authentication settings
     @Bean 
     public ProviderManager authenticationProvider() {
+        
         List<AuthenticationProvider> authenticationProviderList = new ArrayList<>();
         DaoAuthenticationProvider daoAuthenticationProvider=new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
@@ -58,6 +64,8 @@ public class SecurityConfiguration {
         ProviderManager providerManager = new ProviderManager(authenticationProviderList);
         return providerManager;
     }
+    //adding initial admin user
+    //only admin can manage users
     @Bean
     public UserService userService(UserRepository userRepository) {
         User user = new User();

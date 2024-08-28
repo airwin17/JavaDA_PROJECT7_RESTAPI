@@ -17,29 +17,50 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+/**
+ * RatingController class
+ */
 @Controller
 @RequestMapping("/rating")
 @RequiredArgsConstructor
 public class RatingController {
-    // TODO: Inject Rating service
+
+    /**
+     * Rating service
+     */
     private final RatingService ratingService;
+
+    /**
+     * list all Ratings
+     * @param model
+     * @param user
+     * @return
+     */
     @GetMapping("/list")
-    public String home(Model model,@AuthenticationPrincipal User user)
-    {
-        // TODO: find all Rating, add to model
+    public String home(Model model,@AuthenticationPrincipal User user) {
         model.addAttribute("remoteUser", user.getUsername());
         model.addAttribute("ratings", ratingService.getRatings());
         return "rating/list";
     }
 
+    /**
+     * show add new form
+     * @return
+     */
     @GetMapping("/add")
     public String addRatingForm(Rating rating) {
         return "rating/add";
     }
 
+    /**
+     * validate input data and save to db
+     * @param rating
+     * @param result
+     * @param model
+     * @return
+     */
     @PostMapping("/validate")
     public String validate(@Valid Rating rating, BindingResult result, Model model) {
-        // TODO: check data valid and save to db, after saving return Rating list
         if(!result.hasErrors()) {
             ratingService.saveRating(rating);
             model.addAttribute("ratings", ratingService.getRatings());
@@ -47,9 +68,14 @@ public class RatingController {
         return "rating/add";
     }
 
+    /**
+     * show update form
+     * @param id
+     * @param model
+     * @return
+     */
     @GetMapping("/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-        // TODO: get Rating by Id and to model then show to the form
         try {
             model.addAttribute("rating", ratingService.getRatingById(id));
         } catch (RequestedObjectNotFoundException e) {
@@ -59,10 +85,17 @@ public class RatingController {
         return "rating/update";
     }
 
+    /**
+     * update rating
+     * @param id
+     * @param rating
+     * @param result
+     * @param model
+     * @return
+     */
     @PostMapping("/update/{id}")
     public String updateRating(@PathVariable("id") Integer id, @Valid Rating rating,
                              BindingResult result, Model model) {
-        // TODO: check required fields, if valid call service to update Rating and return Rating list
         if(!result.hasErrors()) {
             rating.setRatingid(id);
             ratingService.saveRating(rating);
@@ -70,10 +103,16 @@ public class RatingController {
         return "redirect:/rating/list";
     }
 
+    /**
+     * delete rating
+     * @param id
+     * @param model
+     * @return
+     */
     @GetMapping("/delete/{id}")
     public String deleteRating(@PathVariable("id") Integer id, Model model) {
-        // TODO: Find Rating by Id and delete the Rating, return to Rating list
         ratingService.deleteRating(id);
         return "redirect:/rating/list";
     }
 }
+
